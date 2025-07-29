@@ -11,91 +11,134 @@ const firebaseConfig = {
 
 // Firebaseの初期化
 firebase.initializeApp(firebaseConfig);
-
-// Firestoreのインスタンスを取得
 const db = firebase.firestore();
-
-// 認証機能のインスタンスを取得 (まだ使いませんが、今後のために)
-const auth = firebase.auth();
-
-document.addEventListener('DOMContentLoaded', () => {
-    // ... 既存のコード ...
-});
-
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const taskForm = document.getElementById('task-form');
     const taskTitleInput = document.getElementById('task-title');
     const taskDescriptionInput = document.getElementById('task-description');
     const taskListDiv = document.getElementById('task-list');
+    const usernameInput = document.getElementById('username-input');
+    const passwordInput = document.getElementById('password-input');
     const loginButton = document.getElementById('login-button');
+    const registerButton = document.getElementById('register-button');
     const authStatusParagraph = document.getElementById('auth-status').querySelector('p');
-    const taskInputSection = document.getElementById('task-input'); // 新しく追加
-    const taskListSection = document.getElementById('task-list-section'); // 新しく追加
+    const authSection = document.getElementById('auth-section');
+    const loginFormContainer = document.getElementById('login-form-container');
 
-    // アプリ初期化時のUI状態設定
+    const taskInputSection = document.getElementById('task-input');
+    const taskListSection = document.getElementById('task-list-section');
+
+    const CLOUD_RUN_API_BASE_URL = 'https://auth-api-1048413736807.asia-northeast1.run.app/api/auth';
+
+    // UIの状態を更新する関数
     function updateUIForAuthStatus(isLoggedIn) {
         if (isLoggedIn) {
-            authStatusParagraph.textContent = 'ログイン済み (仮)';
-            loginButton.style.display = 'none';
-            taskInputSection.style.display = 'block'; // ログインしたら表示
-            taskListSection.style.display = 'block'; // ログインしたら表示
-            loadTasks(); // ログイン後にタスクを読み込む
+            authStatusParagraph.textContent = 'ログイン済み';
+            loginFormContainer.style.display = 'none';
+            authSection.style.display = 'block';
+            taskInputSection.style.display = 'block';
+            taskListSection.style.display = 'block';
+            loadTasks();
         } else {
             authStatusParagraph.textContent = '未ログイン';
-            loginButton.style.display = 'block';
-            taskInputSection.style.display = 'none'; // 未ログイン時は非表示
-            taskListSection.style.display = 'none'; // 未ログイン時は非表示
+            loginFormContainer.style.display = 'block';
+            authSection.style.display = 'block';
+            taskInputSection.style.display = 'none';
+            taskListSection.style.display = 'none';
         }
     }
 
-    // --- 認証関連の処理 (Cloud Run API連携) ---
+    // --- 認証関連の処理 ---
+
+    // ログイン処理
     loginButton.addEventListener('click', async () => {
-        const username = prompt('ユーザー名を入力してください (例: user):', 'user');
-        const password = prompt('パスワードを入力してください (例: password):', 'password');
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
 
         if (!username || !password) {
-            alert('ユーザー名とパスワードは必須です。');
+            alert('ユーザー名とパスワードを入力してください。');
             return;
         }
 
         authStatusParagraph.textContent = 'ログイン中...';
-        loginButton.disabled = true; // ボタンを無効化
+        loginButton.disabled = true;
+        registerButton.disabled = true;
 
         try {
-            const CLOUD_RUN_API_URL = 'https://auth-api-1048413736807.asia-northeast1.run.app/api/auth/login';
-
-            const response = await fetch(CLOUD_RUN_API_URL, {
+            const response = await fetch(`${CLOUD_RUN_API_BASE_URL}/login`, { 
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // 将来的に認証トークンなどを送る場合はここに追加
                 },
                 body: JSON.stringify({ username: username, password: password })
             });
 
-            if (response.ok) { // HTTPステータスコードが200番台の場合
+            if (response.ok) {
                 const data = await response.json();
                 console.log('ログイン成功:', data);
-                updateUIForAuthStatus(true); // UIを更新してログイン状態にする
+                updateUIForAuthStatus(true);
                 alert('ログインに成功しました！');
             } else {
                 const errorData = await response.json();
                 console.error('ログイン失敗:', errorData);
                 alert(`ログインに失敗しました: ${errorData.message || response.statusText}`);
-                updateUIForAuthStatus(false); // ログイン失敗なので未ログイン状態に戻す
+                updateUIForAuthStatus(false);
             }
         } catch (error) {
             console.error('API呼び出し中にエラーが発生しました:', error);
             alert('API呼び出し中にエラーが発生しました。ネットワーク接続を確認してください。');
             updateUIForAuthStatus(false);
         } finally {
-            loginButton.disabled = false; // ボタンを再度有効化
+            loginButton.disabled = false;
+            registerButton.disabled = false;
         }
     });
 
-    // --- タスク追加フォームの送信処理 (既存のFirebase連携コード) ---
+    // 新規登録処理
+    registerButton.addEventListener('click', async () => {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (!username || !password) {
+            alert('ユーザー名とパスワードを入力してください。');
+            return;
+        }
+
+        authStatusParagraph.textContent = '登録中...';
+        loginButton.disabled = true;
+        registerButton.disabled = true;
+
+        try {
+            const response = await fetch(`${CLOUD_RUN_API_BASE_URL}/register`, { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: username, password: password })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('登録成功:', data);
+                alert('新規登録に成功しました！ログインしてください。');
+                authStatusParagraph.textContent = '未ログイン'; 
+            } else {
+                const errorData = await response.json();
+                console.error('登録失敗:', errorData);
+                alert(`登録に失敗しました: ${errorData.message || response.statusText}`);
+            }
+        } catch (error) {
+            console.error('API呼び出し中にエラーが発生しました:', error);
+            alert('API呼び出し中にエラーが発生しました。ネットワーク接続を確認してください。');
+        } finally {
+            loginButton.disabled = false;
+            registerButton.disabled = false;
+        }
+    });
+
+
+    // タスク追加フォームの送信処理
     taskForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -122,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- DOMにタスクを追加する関数 (既存のFirebase連携コード) ---
+    // DOMにタスクを追加する関数
     function addTaskToDOM(task) {
         const taskItem = document.createElement('div');
         taskItem.classList.add('task-item');
@@ -138,7 +181,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        //編集ボタン
         taskItem.querySelector('.edit-button').addEventListener('click', async () => {
             const newTitle = prompt('新しいタスクのタイトルを入力してください:', task.title);
             if (newTitle !== null && newTitle.trim() !== '') {
@@ -155,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        //削除ボタン
         taskItem.querySelector('.delete-button').addEventListener('click', async () => {
             if (confirm(`タスク「${task.title}」を削除してもよろしいですか？`)) {
                 try {
@@ -170,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
         taskListDiv.prepend(taskItem);
     }
 
-    // --- アプリの初期化時にタスクをロードする処理 (既存のFirebase連携コード) ---
+    // アプリの初期化時にタスクをロードする処理
     async function loadTasks() {
         taskListDiv.innerHTML = '';
 
@@ -200,5 +241,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // アプリ起動時に認証状態に応じてUIを更新
-    updateUIForAuthStatus(false); // 初期状態は未ログイン
+    updateUIForAuthStatus(false);
 });

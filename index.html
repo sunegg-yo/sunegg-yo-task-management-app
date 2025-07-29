@@ -3,44 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>社内タスク管理アプリ</title>
+    <title>タスク管理アプリ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>社内タスク管理</h1>
-        <div id="auth-status">
-            <p>未ログイン</p>
-            <button id="login-button">ログイン (仮)</button>
-        </div>
+        <h1>タスク管理アプリ</h1>
     </header>
 
-    <main>
-        <section id="task-input">
-            <h2>新しいタスクを追加</h2>
-            <form id="task-form">
-                <input type="text" id="task-title" placeholder="タスクのタイトル" required>
-                <textarea id="task-description" placeholder="タスクの詳細"></textarea>
-                <button type="submit">タスクを追加</button>
-            </form>
-        </section>
-
-        <section id="task-list-section">
-            <h2>現在のタスク</h2>
-            <div id="task-list">
-                <p>タスクがありません。</p>
+    <div class="container">
+        <section id="auth-section"> <h2>認証</h2>
+            <div id="auth-status">
+                <p>未ログイン</p>
             </div>
-        </section>
-    </main>
+            <div id="login-form-container">
+                <input type="text" id="username-input" placeholder="ユーザー名">
+                <input type="password" id="password-input" placeholder="パスワード">
+                <button id="login-button">ログイン</button>
+                <button id="register-button">新規登録</button> </div>
+        </section> <main>
+            <section id="task-input">
+                <h2>新しいタスクを追加</h2>
+                <form id="task-form">
+                    <input type="text" id="task-title" placeholder="タスクのタイトル" required>
+                    <textarea id="task-description" placeholder="タスクの詳細"></textarea>
+                    <button type="submit">タスクを追加</button>
+                </form>
+            </section>
+
+            <section id="task-list-section">
+                <h2>現在のタスク</h2>
+                <div id="task-list">
+                    <p>タスクがありません。</p>
+                </div>
+            </section>
+        </main>
+    </div>
 
     <footer>
-        <p>&copy; 2025 社内タスク管理アプリ</p>
+        <p>&copy; 2025 タスク管理アプリ</p>
     </footer>
 
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="script.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
