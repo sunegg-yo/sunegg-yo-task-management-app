@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginButton.disabled = true; // ボタンを無効化
 
         try {
-            const CLOUD_RUN_API_URL = 'https://auth-api-1048413736807.asia-northeast1.run.app/api/auth/login';
+            const CLOUD_RUN_API_URL = 'https://auth-api-usgbmcmoza-an.a.run.app/api/auth/login';
 
             const response = await fetch(CLOUD_RUN_API_URL, {
                 method: 'POST',
