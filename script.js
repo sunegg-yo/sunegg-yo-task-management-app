@@ -32,17 +32,44 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskListDiv = document.getElementById('task-list');
     const loginButton = document.getElementById('login-button');
     const authStatusParagraph = document.getElementById('auth-status').querySelector('p');
+    const taskInputSection = document.getElementById('task-input'); // 新しく追加
+    const taskListSection = document.getElementById('task-list-section'); // 新しく追加
+
+    // アプリ初期化時のUI状態設定
+    function updateUIForAuthStatus(isLoggedIn) {
+        if (isLoggedIn) {
+            authStatusParagraph.textContent = 'ログイン済み (仮)';
+            loginButton.style.display = 'none';
+            taskInputSection.style.display = 'block'; // ログインしたら表示
+            taskListSection.style.display = 'block'; // ログインしたら表示
+            loadTasks(); // ログイン後にタスクを読み込む
+        } else {
+            authStatusParagraph.textContent = '未ログイン';
+            loginButton.style.display = 'block';
+            taskInputSection.style.display = 'none'; // 未ログイン時は非表示
+            taskListSection.style.display = 'none'; // 未ログイン時は非表示
+        }
+    }
 
     // --- 認証関連の仮の処理 ---
-    loginButton.addEventListener('click', () => {
+    loginButton.addEventListener('click', async () => {
         // ここに将来的にGoogle Cloud Runの認証APIを呼び出す処理を記述します
-        alert('ログインボタンがクリックされました！ (まだ認証機能は実装されていません)');
-        authStatusParagraph.textContent = 'ログイン済み (仮)';
-        loginButton.style.display = 'none'; // ログインしたらボタンを非表示にする (仮)
+        // 例: const response = await fetch('YOUR_CLOUD_RUN_AUTH_API_ENDPOINT/login', { /* ... */ });
+        // const data = await response.json();
+        // if (data.success) { ... }
+
+        alert('ログイン処理を開始します。認証APIへの呼び出しをシミュレートします...');
+
+        // 実際の認証API呼び出しの代わりに、数秒後にログイン成功をシミュレート
+        setTimeout(() => {
+            console.log('ログイン成功をシミュレートしました。');
+            updateUIForAuthStatus(true); // UIを更新してログイン状態にする
+            alert('ログインに成功しました (仮)！');
+        }, 1500); // 1.5秒後に実行
     });
 
-    // --- タスク追加フォームの送信処理 ---
-    taskForm.addEventListener('submit', async (e) => { // asyncを追加
+    // --- タスク追加フォームの送信処理 (既存のFirebase連携コード) ---
+    taskForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const title = taskTitleInput.value.trim();
@@ -50,17 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (title) {
             try {
-                // Firestoreに新しいタスクを追加
                 await db.collection('tasks').add({
                     title: title,
                     description: description,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp() // サーバータイムスタンプを使用
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // フォームをクリア
                 taskTitleInput.value = '';
                 taskDescriptionInput.value = '';
-                // 'addTaskToDOM'はonSnapshotで自動的に呼び出されるため、ここでは不要
 
             } catch (error) {
                 console.error("Error adding document: ", error);
@@ -71,47 +95,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- DOMにタスクを追加する関数 (仮) ---
+    // --- DOMにタスクを追加する関数 (既存のFirebase連携コード) ---
     function addTaskToDOM(task) {
         const taskItem = document.createElement('div');
         taskItem.classList.add('task-item');
-        taskItem.setAttribute('data-id', task.id); // タスクのIDを保持
+        taskItem.setAttribute('data-id', task.id);
 
         taskItem.innerHTML = `
             <h3>${task.title}</h3>
             <p>${task.description || '詳細なし'}</p>
-            <p style="font-size: 0.8em; color: #888;">作成日時: ${task.createdAt}</p>
+            <p style="font-size: 0.8em; color: #888;">作成日時: ${task.createdAt ? new Date(task.createdAt.toDate()).toLocaleString() : '不明'}</p>
             <div class="task-actions">
                 <button class="edit-button">編集</button>
                 <button class="delete-button">削除</button>
             </div>
         `;
 
-        // 編集ボタンのイベントリスナー (まだ機能は実装されていません)
-        taskItem.querySelector('.edit-button').addEventListener('click', async () => { // asyncを追加
+        //編集ボタン
+        taskItem.querySelector('.edit-button').addEventListener('click', async () => {
             const newTitle = prompt('新しいタスクのタイトルを入力してください:', task.title);
             if (newTitle !== null && newTitle.trim() !== '') {
                 try {
                     await db.collection('tasks').doc(task.id).update({
                         title: newTitle.trim()
-                        // descriptionなどの他のフィールドも同様に追加可能
                     });
-                    // DOMの更新はonSnapshotで自動的に行われる
                 } catch (error) {
                     console.error("Error updating document: ", error);
                     alert("タスクの更新中にエラーが発生しました。");
                 }
-            } else if (newTitle !== null) { // 空文字列でOKを押した場合
+            } else if (newTitle !== null) {
                 alert('タイトルは空にできません。');
             }
         });
 
-        // 削除ボタンのイベントリスナー
-        taskItem.querySelector('.delete-button').addEventListener('click', async () => { // asyncを追加
+        //削除ボタン
+        taskItem.querySelector('.delete-button').addEventListener('click', async () => {
             if (confirm(`タスク「${task.title}」を削除してもよろしいですか？`)) {
                 try {
                     await db.collection('tasks').doc(task.id).delete();
-                    // DOMからの削除はonSnapshotで自動的に行われる
                 } catch (error) {
                     console.error("Error removing document: ", error);
                     alert("タスクの削除中にエラーが発生しました。");
@@ -119,19 +140,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        taskListDiv.prepend(taskItem); // 新しいタスクを一番上に追加
+        taskListDiv.prepend(taskItem);
     }
 
-    // --- アプリの初期化時にタスクをロードする処理 (今は何もしません) ---
+    // --- アプリの初期化時にタスクをロードする処理 (既存のFirebase連携コード) ---
     async function loadTasks() {
-        taskListDiv.innerHTML = ''; // 既存のタスク表示をクリア
+        taskListDiv.innerHTML = '';
 
         try {
-            // Firestoreからタスクをリアルタイムで購読する (変更があるたびに更新)
-            // 'tasks'コレクションの'createdAt'フィールドで降順にソート
             db.collection('tasks').orderBy('createdAt', 'desc')
                 .onSnapshot((snapshot) => {
-                    taskListDiv.innerHTML = ''; // 変更があるたびに一度クリア
+                    taskListDiv.innerHTML = '';
                     if (snapshot.empty) {
                         taskListDiv.innerHTML = '<p>タスクがありません。</p>';
                         return;
@@ -139,8 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     snapshot.forEach(doc => {
                         const task = doc.data();
-                        task.id = doc.id; // ドキュメントIDをタスクオブジェクトに追加
-                        addTaskToDOM(task); // DOMに追加
+                        task.id = doc.id;
+                        addTaskToDOM(task);
                     });
                 }, (error) => {
                     console.error("Error fetching tasks: ", error);
@@ -153,5 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    loadTasks(); // アプリ起動時にタスクを読み込む
+    // アプリ起動時に認証状態に応じてUIを更新
+    updateUIForAuthStatus(false); // 初期状態は未ログイン
 });

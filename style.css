@@ -17,6 +17,12 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* 認証状態に応じた表示制御 */
+#task-input,
+#task-list-section {
+    display: none; /* 初期状態では非表示 */
+}
+
 /* ヘッダー */
 header {
     background-color: #4CAF50;
