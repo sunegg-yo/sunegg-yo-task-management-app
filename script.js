@@ -1,5 +1,4 @@
-// Firebaseの設定 (Firebaseコンソールからコピーしたものをここに貼り付ける)
-// 例:
+// Firebaseの設定
 const firebaseConfig = {
     apiKey: "AIzaSyAYwlHSctrgE0tGg3RM1cwOXZfq6XwtRi0",
     authDomain: "task-management-app-32432.firebaseapp.com",
