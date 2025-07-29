@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>社内タスク管理アプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>社内タスク管理</h1>
+        <div id="auth-status">
+            <p>未ログイン</p>
+            <button id="login-button">ログイン (仮)</button>
+        </div>
+    </header>
+
+    <main>
+        <section id="task-input">
+            <h2>新しいタスクを追加</h2>
+            <form id="task-form">
+                <input type="text" id="task-title" placeholder="タスクのタイトル" required>
+                <textarea id="task-description" placeholder="タスクの詳細"></textarea>
+                <button type="submit">タスクを追加</button>
+            </form>
+        </section>
+
+        <section id="task-list-section">
+            <h2>現在のタスク</h2>
+            <div id="task-list">
+                <p>タスクがありません。</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 社内タスク管理アプリ</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
