@@ -51,21 +51,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 認証関連の仮の処理 ---
+    // --- 認証関連の処理 (Cloud Run API連携) ---
     loginButton.addEventListener('click', async () => {
-        // ここに将来的にGoogle Cloud Runの認証APIを呼び出す処理を記述します
-        // 例: const response = await fetch('YOUR_CLOUD_RUN_AUTH_API_ENDPOINT/login', { /* ... */ });
-        // const data = await response.json();
-        // if (data.success) { ... }
+        const username = prompt('ユーザー名を入力してください (例: user):', 'user');
+        const password = prompt('パスワードを入力してください (例: password):', 'password');
 
-        alert('ログイン処理を開始します。認証APIへの呼び出しをシミュレートします...');
+        if (!username || !password) {
+            alert('ユーザー名とパスワードは必須です。');
+            return;
+        }
 
-        // 実際の認証API呼び出しの代わりに、数秒後にログイン成功をシミュレート
-        setTimeout(() => {
-            console.log('ログイン成功をシミュレートしました。');
-            updateUIForAuthStatus(true); // UIを更新してログイン状態にする
-            alert('ログインに成功しました (仮)！');
-        }, 1500); // 1.5秒後に実行
+        authStatusParagraph.textContent = 'ログイン中...';
+        loginButton.disabled = true; // ボタンを無効化
+
+        try {
+            const CLOUD_RUN_API_URL = 'https://auth-api-1048413736807.asia-northeast1.run.app/api/auth/login';
+
+            const response = await fetch(CLOUD_RUN_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // 将来的に認証トークンなどを送る場合はここに追加
+                },
+                body: JSON.stringify({ username: username, password: password })
+            });
+
+            if (response.ok) { // HTTPステータスコードが200番台の場合
+                const data = await response.json();
+                console.log('ログイン成功:', data);
+                updateUIForAuthStatus(true); // UIを更新してログイン状態にする
+                alert('ログインに成功しました！');
+            } else {
+                const errorData = await response.json();
+                console.error('ログイン失敗:', errorData);
+                alert(`ログインに失敗しました: ${errorData.message || response.statusText}`);
+                updateUIForAuthStatus(false); // ログイン失敗なので未ログイン状態に戻す
+            }
+        } catch (error) {
+            console.error('API呼び出し中にエラーが発生しました:', error);
+            alert('API呼び出し中にエラーが発生しました。ネットワーク接続を確認してください。');
+            updateUIForAuthStatus(false);
+        } finally {
+            loginButton.disabled = false; // ボタンを再度有効化
+        }
     });
 
     // --- タスク追加フォームの送信処理 (既存のFirebase連携コード) ---
