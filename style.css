@@ -139,8 +139,9 @@ section h2 {
 #task-form textarea,
 #task-form input[type="date"],
 #task-form input[type="text"][placeholder="カテゴリ (例: 仕事, プライベート)"] {
-    width: 100%; /* 親要素の幅いっぱいに広げる */
-    box-sizing: border-box; /* パディングやボーダーを幅に含める */
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px;
 }
 
 .task-input-grid {
@@ -235,17 +236,6 @@ section h2 {
 
 .task-meta span {
     margin-right: 15px;
-}
-
-/* タスク追加フォームのレイアウト */
-.form-row {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-.form-row input {
-    flex: 1; /* 入力フィールドが均等にスペースを埋める */
 }
 
 .edit-button {
