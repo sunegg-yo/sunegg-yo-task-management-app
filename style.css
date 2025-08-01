@@ -17,6 +17,44 @@ body {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* ヘッダー */
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 20px;
+    text-align: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8em;
+}
+
+/* メインコンテンツ */
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+section h2 {
+    color: #4CAF50;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
 /* 認証セクションのスタイル */
 #auth-section {
     background-color: #e0f7fa;
@@ -61,9 +99,18 @@ body {
     background-color: #004d40;
 }
 
+#auth-status {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+}
+
 #auth-status p {
     font-weight: bold;
     color: #333;
+    margin: 0 10px 0 0;
+    font-size: 0.9em;
 }
 
 /* 認証状態に応じた表示制御 */
@@ -72,81 +119,28 @@ body {
     display: none; /* 初期状態では非表示 */
 }
 
-/* ヘッダー */
-header {
-    background-color: #4CAF50;
-    color: white;
-    padding: 15px 20px;
-    text-align: center;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header h1 {
-    margin: 0;
-    font-size: 1.8em;
-}
-
-#auth-status {
-    display: flex;
-    align-items: center;
-}
-
-#auth-status p {
-    margin: 0 10px 0 0;
-    font-size: 0.9em;
-}
-
-#login-button {
-    background-color: #2196F3;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-#login-button:hover {
-    background-color: #1976D2;
-}
-
-/* メインコンテンツ */
-main {
-    padding: 20px;
-}
-
-section {
-    margin-bottom: 30px;
-    padding: 20px;
-    background-color: #fcfcfc;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-section h2 {
-    color: #4CAF50;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-    margin-top: 0;
-}
-
-/* フォーム */
-#task-form input[type="text"],
+/* フォームの共通スタイル */
+#task-form input,
 #task-form textarea,
-#task-form input[type="date"],
-#task-form input[type="text"][placeholder="カテゴリ (例: 仕事, プライベート)"] {
+#task-form button[type="submit"] {
     width: 100%;
     box-sizing: border-box;
-    padding: 5px;
+    padding: 10px; /* パディングを統一 */
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
 }
 
+#task-form textarea {
+    resize: vertical; /* 縦方向のみリサイズ可能に */
+    min-height: 80px;
+}
+
+/* フォームのグリッドレイアウト */
 .task-input-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2つの列を均等な幅に設定 */
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
     margin-bottom: 10px;
 }
@@ -157,14 +151,12 @@ section h2 {
     grid-column: 1 / -1; /* グリッドの全幅を使用 */
 }
 
+/* フォームのボタン */
 #task-form button[type="submit"] {
     background-color: #007BFF;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
     cursor: pointer;
-    font-size: 1em;
     transition: background-color 0.3s ease;
 }
 
@@ -179,33 +171,36 @@ section h2 {
     border-radius: 8px;
     margin-bottom: 15px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex; /* Flexbox を使用 */
-    flex-direction: column; /* 要素を縦に並べる */
-    position: relative; /* チェックボックスの位置調整用 */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* チェックボックスのためのスペース確保 */
+.task-item h3,
+.task-item p,
+.task-meta {
+    padding-left: 30px;
 }
 
 .task-item h3 {
     color: #333;
     margin-top: 0;
     margin-bottom: 5px;
-    padding-left: 30px; /* チェックボックスのスペースを確保 */
 }
 
 .task-item p {
     color: #666;
     margin-bottom: 5px;
-    padding-left: 30px; /* チェックボックスのスペースを確保 */
 }
 
 .task-actions {
     margin-top: 10px;
     text-align: right;
-    padding-left: 30px; /* チェックボックスのスペースを確保 */
+    padding-left: 30px;
 }
 
 .task-actions button {
-    background-color: #f44336; /* 削除ボタンの例 */
-    color: white;
     padding: 8px 12px;
     border: none;
     border-radius: 4px;
@@ -213,29 +208,6 @@ section h2 {
     font-size: 0.9em;
     margin-left: 10px;
     transition: background-color 0.3s ease;
-}
-
-.task-actions .edit-button {
-    background-color: #2196f3; /* 編集ボタンの例 */
-}
-
-.task-actions button:hover {
-    background-color: #d32f2f;
-}
-
-.task-actions .edit-button:hover {
-    background-color: #1976d2;
-}
-
-.task-meta { /* 期日とカテゴリのスタイル */
-    font-size: 0.9em;
-    color: #777;
-    margin-top: 5px;
-    padding-left: 30px; /* チェックボックスのスペースを確保 */
-}
-
-.task-meta span {
-    margin-right: 15px;
 }
 
 .edit-button {
@@ -254,6 +226,17 @@ section h2 {
 
 .delete-button:hover {
     background-color: #c82333;
+}
+
+/* タスクのメタ情報 */
+.task-meta {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 5px;
+}
+
+.task-meta span {
+    margin-right: 15px;
 }
 
 /* タスクリストがない場合の表示 */
@@ -300,14 +283,14 @@ section h2 {
 
 /* 完了済みタスクのスタイル */
 .task-item.completed {
-    background-color: #e0ffe0; /* 薄い緑色 */
-    text-decoration: line-through; /* 取り消し線 */
-    opacity: 0.7; /* 少し透明に */
+    background-color: #e0ffe0;
+    text-decoration: line-through;
+    opacity: 0.7;
 }
 
 .task-item.completed h3,
 .task-item.completed p {
-    color: #999; /* 文字色を薄く */
+    color: #999;
 }
 
 /* フッター */
