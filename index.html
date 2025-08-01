@@ -12,7 +12,8 @@
     </header>
 
     <div class="container">
-        <section id="auth-section"> <h2>認証</h2>
+        <section id="auth-section">
+            <h2>認証</h2>
             <div id="auth-status">
                 <p>未ログイン</p>
             </div>
@@ -20,14 +21,18 @@
                 <input type="text" id="username-input" placeholder="ユーザー名">
                 <input type="password" id="password-input" placeholder="パスワード">
                 <button id="login-button">ログイン</button>
-                <button id="register-button">新規登録</button> </div>
-        </section> <main>
+                <button id="register-button">新規登録</button>
+            </div>
+        </section>
+
+        <main>
             <section id="task-input">
                 <h2>新しいタスクを追加</h2>
                 <form id="task-form">
                     <input type="text" id="task-title" placeholder="タスクのタイトル" required>
                     <textarea id="task-description" placeholder="タスクの詳細"></textarea>
-                    <button type="submit">タスクを追加</button>
+                    
+                    <input type="date" id="task-due-date"> <input type="text" id="task-category" placeholder="カテゴリ (例: 仕事, プライベート)"> <button type="submit">タスクを追加</button>
                 </form>
             </section>
 
