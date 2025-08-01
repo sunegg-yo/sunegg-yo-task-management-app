@@ -2,6 +2,7 @@
 async function initializeFirebase() {
     try {
         // APIからAPIキーを取得
+        const CLOUD_RUN_API_BASE_URL = 'https://auth-api-1048413736807.asia-northeast1.run.app/api/auth';
         const response = await fetch(`${CLOUD_RUN_API_BASE_URL}/../config/firebase`);
         if (!response.ok) {
             throw new Error('Failed to fetch Firebase API key from backend.');
