@@ -31,13 +31,35 @@
                 <form id="task-form">
                     <input type="text" id="task-title" placeholder="タスクのタイトル" required>
                     <textarea id="task-description" placeholder="タスクの詳細"></textarea>
-                    
-                    <input type="date" id="task-due-date"> <input type="text" id="task-category" placeholder="カテゴリ (例: 仕事, プライベート)"> <button type="submit">タスクを追加</button>
+                    <div class="form-row">
+                        <input type="date" id="task-due-date">
+                        <input type="text" id="task-category" placeholder="カテゴリ (例: 仕事, プライベート)">
+                    </div>
+                    <button type="submit">タスクを追加</button>
                 </form>
             </section>
 
             <section id="task-list-section">
                 <h2>現在のタスク</h2>
+                <div id="controls-panel">
+                    <div class="filter-controls">
+                        <label for="status-filter">ステータス:</label>
+                        <select id="status-filter">
+                            <option value="all">すべて</option>
+                            <option value="pending">未完了</option>
+                            <option value="completed">完了</option>
+                        </select>
+                    </div>
+                    <div class="sort-controls">
+                        <label for="sort-by">並び替え:</label>
+                        <select id="sort-by">
+                            <option value="createdAt_desc">作成日時 (新しい順)</option>
+                            <option value="createdAt_asc">作成日時 (古い順)</option>
+                            <option value="dueDate_asc">期日 (近い順)</option>
+                            <option value="dueDate_desc">期日 (遠い順)</option>
+                        </select>
+                    </div>
+                </div>
                 <div id="task-list">
                     <p>タスクがありません。</p>
                 </div>

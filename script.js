@@ -55,6 +55,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const taskInputSection = document.getElementById('task-input');
     const taskListSection = document.getElementById('task-list-section');
 
+    const statusFilter = document.getElementById('status-filter');
+    const sortBy = document.getElementById('sort-by');
+
     // ★ログインしているユーザーのIDを保持する変数★
     let currentUserId = null;
 
@@ -294,33 +297,67 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         taskListDiv.innerHTML = ''; // 一度クリア
 
-        try {
-            // ★ログインしているユーザーのタスクのみをフィルタリング★
-            db.collection('tasks')
-                .where('userId', '==', currentUserId) // ★これ重要★
-                .orderBy('createdAt', 'desc')
-                .onSnapshot((snapshot) => {
-                    taskListDiv.innerHTML = '';
-                    if (snapshot.empty) {
-                        taskListDiv.innerHTML = '<p>タスクがありません。</p>';
-                        return;
-                    }
+        // ★フィルタリングとソートの値を読み取る★
+        const currentStatusFilter = statusFilter.value;
+        const currentSortBy = sortBy.value;
 
-                    snapshot.forEach(doc => {
-                        const task = doc.data();
-                        task.id = doc.id;
-                        addTaskToDOM(task);
-                    });
-                }, (error) => {
-                    console.error("Error fetching tasks: ", error);
-                    alert("タスクの読み込み中にエラーが発生しました。");
+        // Firestoreクエリを動的に構築
+        let query = db.collection('tasks').where('userId', '==', currentUserId);
+
+        // ステータスでフィルタリング
+        if (currentStatusFilter !== 'all') {
+            query = query.where('status', '==', currentStatusFilter);
+        }
+
+        // ソート
+        let orderByField;
+        let orderDirection;
+        if (currentSortBy === 'createdAt_asc') {
+            orderByField = 'createdAt';
+            orderDirection = 'asc';
+        } else if (currentSortBy === 'createdAt_desc') {
+            orderByField = 'createdAt';
+            orderDirection = 'desc';
+        } else if (currentSortBy === 'dueDate_asc') {
+            orderByField = 'dueDate';
+            orderDirection = 'asc';
+        } else if (currentSortBy === 'dueDate_desc') {
+            orderByField = 'dueDate';
+            orderDirection = 'desc';
+        } else {
+            orderByField = 'createdAt';
+            orderDirection = 'desc';
+        }
+        
+        query = query.orderBy(orderByField, orderDirection);
+
+        try {
+            query.onSnapshot((snapshot) => {
+                taskListDiv.innerHTML = '';
+                if (snapshot.empty) {
+                    taskListDiv.innerHTML = '<p>タスクがありません。</p>';
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const task = doc.data();
+                    task.id = doc.id;
+                    addTaskToDOM(task);
                 });
+            }, (error) => {
+                console.error("Error fetching tasks: ", error);
+                alert("タスクの読み込み中にエラーが発生しました。");
+            });
 
         } catch (error) {
             console.error("Error setting up task listener: ", error);
             alert("タスクの読み込み設定中にエラーが発生しました。");
         }
     }
+
+    // ★フィルタリングとソートの変更イベントリスナー★
+    statusFilter.addEventListener('change', loadTasks);
+    sortBy.addEventListener('change', loadTasks);
 
     // アプリ起動時に認証状態に応じてUIを更新
     updateUIForAuthStatus(false); // 初期状態は未ログイン
