@@ -135,19 +135,25 @@ section h2 {
 }
 
 /* フォーム */
+#task-form input[type="text"],
+#task-form textarea,
 #task-form input[type="date"],
 #task-form input[type="text"][placeholder="カテゴリ (例: 仕事, プライベート)"] {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
+    width: 80%; /* 親要素の幅いっぱいに広げる */
+    box-sizing: border-box; /* パディングやボーダーを幅に含める */
 }
 
-#task-form textarea {
-    resize: vertical; /* 縦方向のみリサイズ可能に */
-    min-height: 80px;
+.task-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2つの列を均等な幅に設定 */
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#task-title,
+#task-description,
+#task-form button[type="submit"] {
+    grid-column: 1 / -1; /* グリッドの全幅を使用 */
 }
 
 #task-form button[type="submit"] {
