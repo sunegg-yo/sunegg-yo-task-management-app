@@ -139,7 +139,7 @@ section h2 {
 #task-form textarea,
 #task-form input[type="date"],
 #task-form input[type="text"][placeholder="カテゴリ (例: 仕事, プライベート)"] {
-    width: 80%; /* 親要素の幅いっぱいに広げる */
+    width: 100%; /* 親要素の幅いっぱいに広げる */
     box-sizing: border-box; /* パディングやボーダーを幅に含める */
 }
 
