@@ -1,18 +1,40 @@
-// Firebaseの設定
-const firebaseConfig = {
-    apiKey: "AIzaSyAYwlHSctrgE0tGg3RM1cwOXZfq6XwtRi0",
-    authDomain: "task-management-app-32432.firebaseapp.com",
-    projectId: "task-management-app-32432",
-    storageBucket: "task-management-app-32432.firebasestorage.app",
-    messagingSenderId: "1048413736807",
-    appId: "1:1048413736807:web:402e483312b515dd9129c2",
-    measurementId: "G-W0THE0EZPG"
-};
+// Firebaseの設定と初期化を関数化
+async function initializeFirebase() {
+    try {
+        // APIからAPIキーを取得
+        const response = await fetch(`${CLOUD_RUN_API_BASE_URL}/../config/firebase`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch Firebase API key from backend.');
+        }
+        const config = await response.json();
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+        const firebaseConfig = {
+            apiKey: config.apiKey, // APIから取得したキーを使用
+            authDomain: "task-management-app-32432.firebaseapp.com",
+            projectId: "task-management-app-32432",
+            storageBucket: "task-management-app-32432.firebasestorage.app",
+            messagingSenderId: "1048413736807",
+            appId: "1:1048413736807:web:402e483312b515dd9129c2",
+            measurementId: "G-W0THE0EZPG"
+        };
 
-document.addEventListener('DOMContentLoaded', () => {
+        // Firebaseの初期化
+        firebase.initializeApp(firebaseConfig);
+        return firebase.firestore();
+
+    } catch (error) {
+        console.error("Error initializing Firebase: ", error);
+        alert("Firebaseの初期化に失敗しました。");
+        return null;
+    }
+}
+
+// アプリケーションのエントリーポイント
+document.addEventListener('DOMContentLoaded', async () => {
+    // Firebaseを初期化し、dbインスタンスを取得
+    const db = await initializeFirebase();
+    if (!db) return; // 初期化失敗の場合は処理を中断
+
     const taskForm = document.getElementById('task-form');
     const taskTitleInput = document.getElementById('task-title');
     const taskDescriptionInput = document.getElementById('task-description');
